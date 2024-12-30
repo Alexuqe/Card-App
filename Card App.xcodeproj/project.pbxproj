@@ -6,30 +6,25 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		CE3050942D22FF200093E02D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE30508A2D22FF200093E02D /* AppDelegate.swift */; };
+		CE3050952D22FF200093E02D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3050912D22FF200093E02D /* SceneDelegate.swift */; };
+		CE3050962D22FF200093E02D /* CardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3050922D22FF200093E02D /* CardViewController.swift */; };
+		CE3050972D22FF200093E02D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE30508B2D22FF200093E02D /* Assets.xcassets */; };
+		CE30509E2D2303490093E02D /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE30509D2D2303490093E02D /* Model.swift */; };
+		CE3050A12D2303DF0093E02D /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3050A02D2303DF0093E02D /* DataStore.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		CE3050722D22FEF90093E02D /* Card App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Card App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CE30508A2D22FF200093E02D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		CE30508B2D22FF200093E02D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		CE30508C2D22FF200093E02D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CE3050912D22FF200093E02D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		CE3050922D22FF200093E02D /* CardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardViewController.swift; sourceTree = "<group>"; };
+		CE30509D2D2303490093E02D /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		CE3050A02D2303DF0093E02D /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		CE3050842D22FEFC0093E02D /* Exceptions for "Card App" folder in "Card App" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = CE3050712D22FEF90093E02D /* Card App */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		CE3050742D22FEF90093E02D /* Card App */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				CE3050842D22FEFC0093E02D /* Exceptions for "Card App" folder in "Card App" target */,
-			);
-			path = "Card App";
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		CE30506F2D22FEF90093E02D /* Frameworks */ = {
@@ -45,7 +40,7 @@
 		CE3050692D22FEF90093E02D = {
 			isa = PBXGroup;
 			children = (
-				CE3050742D22FEF90093E02D /* Card App */,
+				CE3050932D22FF200093E02D /* Card App */,
 				CE3050732D22FEF90093E02D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -56,6 +51,52 @@
 				CE3050722D22FEF90093E02D /* Card App.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		CE3050932D22FF200093E02D /* Card App */ = {
+			isa = PBXGroup;
+			children = (
+				CE30509B2D22FF270093E02D /* App */,
+				CE30509C2D22FF2E0093E02D /* ViewControllers */,
+				CE30508B2D22FF200093E02D /* Assets.xcassets */,
+				CE30509F2D2303530093E02D /* Model */,
+			);
+			path = "Card App";
+			sourceTree = "<group>";
+		};
+		CE30509B2D22FF270093E02D /* App */ = {
+			isa = PBXGroup;
+			children = (
+				CE30508A2D22FF200093E02D /* AppDelegate.swift */,
+				CE3050912D22FF200093E02D /* SceneDelegate.swift */,
+				CE30508C2D22FF200093E02D /* Info.plist */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		CE30509C2D22FF2E0093E02D /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				CE3050922D22FF200093E02D /* CardViewController.swift */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		CE30509F2D2303530093E02D /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				CE30509D2D2303490093E02D /* Model.swift */,
+				CE3050A22D2304790093E02D /* Data */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		CE3050A22D2304790093E02D /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				CE3050A02D2303DF0093E02D /* DataStore.swift */,
+			);
+			path = Data;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -72,9 +113,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				CE3050742D22FEF90093E02D /* Card App */,
 			);
 			name = "Card App";
 			packageProductDependencies = (
@@ -122,6 +160,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE3050972D22FF200093E02D /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,6 +171,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE3050942D22FF200093E02D /* AppDelegate.swift in Sources */,
+				CE3050952D22FF200093E02D /* SceneDelegate.swift in Sources */,
+				CE3050962D22FF200093E02D /* CardViewController.swift in Sources */,
+				CE30509E2D2303490093E02D /* Model.swift in Sources */,
+				CE3050A12D2303DF0093E02D /* DataStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -147,10 +191,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 24Q9WM75S6;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Card App/Info.plist";
+				INFOPLIST_FILE = "Card App/App/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -160,9 +203,13 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "halushko.Card-App";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -175,10 +222,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 24Q9WM75S6;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Card App/Info.plist";
+				INFOPLIST_FILE = "Card App/App/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -188,9 +234,13 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "halushko.Card-App";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
