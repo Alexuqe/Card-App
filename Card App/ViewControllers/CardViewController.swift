@@ -10,9 +10,9 @@ import UIKit
 final class CardViewController: UIViewController {
 
         //MARK: Outlets
-    private let cardbackgroundView = UIView()
-    private var cardImageView = UIImageView()
     private let buttonStackView = UIStackView()
+    private lazy var cardbackgroundView = addBackground()
+    private lazy var cardImageView = addPhotoCard(name: card[cardIndex].photo)
     private lazy var titleLabel = addTitle(string: card[cardIndex].title)
     private lazy var rightButton = addButton(image: "checkmark")
     private lazy var leftButton = addButton(image: "xmark")
@@ -37,8 +37,6 @@ final class CardViewController: UIViewController {
         heightPhoto = view.bounds.height / 2
         setupUI()
     }
-
-
 }
 
     //MARK: Private Methods
@@ -53,49 +51,34 @@ private extension CardViewController {
         configureLikeImageView()
         configureCommentImageView()
         configureButtonStackView()
+
+        constraintsUI()
     }
 
         //MARK: Configure UI
     func configureCardBackground() {
-        cardbackgroundView.backgroundColor = .systemGray5
-        cardbackgroundView.layer.cornerRadius = cornerRadius
-        cardbackgroundView.clipsToBounds = true
-        cardbackgroundView.translatesAutoresizingMaskIntoConstraints = false
-
         view.addSubview(cardbackgroundView)
-        constraintsBackgroundView()
     }
 
     func configureAvatarImage() {
         cardbackgroundView.addSubview(avatarImageView)
-        constraintsAvatarImage()
     }
 
     func configureTitleImage() {
         cardbackgroundView.addSubview(titleLabel)
-        constraintsTitleImage()
     }
 
     func configurePhotoCard() {
-        cardImageView.image = UIImage(named: card[cardIndex].photo)
-        cardImageView.contentMode = .scaleAspectFill
-        cardImageView.clipsToBounds = true
-        cardImageView.translatesAutoresizingMaskIntoConstraints = false
-
         cardbackgroundView.addSubview(cardImageView)
-        constraintsPhotoCard()
     }
 
     func configureLikeImageView() {
         cardbackgroundView.addSubview(likeImageView)
-        constraintsLikeImage()
     }
 
     func configureCommentImageView() {
         cardbackgroundView.addSubview(commentImageView)
-        constraintsCommentImageView()
     }
-
 
     func configureButtonStackView() {
         buttonStackView.axis = .horizontal
@@ -108,64 +91,188 @@ private extension CardViewController {
 
         view.addSubview(buttonStackView)
 
-        constraintsButtonStackView()
 
         rightButton.addTarget(self, action: #selector(done), for: .touchUpInside)
+        leftButton.addTarget(self, action: #selector(deletePhoto), for: .touchUpInside)
     }
 
 
-    //MARK: Actions
-
+        //MARK: Actions Buttons
     @objc func done () {
-//        nextCard()
+        nextCard()
     }
 
+    @objc func deletePhoto() {
+        deleteCard()
+    }
 
-
+        //MARK: Setup Actions Buttons
     func nextCard() {
-        cardIndex += 1
         if cardIndex < card.count - 1 {
+            cardIndex += 1
             updateUI()
         } else {
-            return
+            cardIndex = card.count - 1
         }
     }
 
+    func deleteCard() {
+        if cardIndex > 0 {
+            cardIndex -= 1
+            deleteUI()
+        } else {
+            cardIndex = 0
+        }
+    }
+
+        //MARK: Create New UI
     func updateUI() {
         let currentPhoto = card[cardIndex].photo
         let currentTitle = card[cardIndex].title
 
-        let newPhoto = addImage(name: currentPhoto)
-        let newTitle = addTitle(string: currentTitle)
+        let newViews = createNewViews(photo: currentPhoto, title: currentTitle)
+        addNewViewsToBackground(views: newViews)
+        setupConstraints(for: newViews)
+        animateCardTransition(newViews: newViews)
+    }
 
-        cardbackgroundView.addSubview(newPhoto)
-        cardbackgroundView.addSubview(newTitle)
+        //MARK: Delete New UI
+    func deleteUI() {
+        let currentPhoto = card[cardIndex].photo
+        let currentTitle = card[cardIndex].title
+        let deleteViews = createNewViews(photo: currentPhoto, title: currentTitle)
+        animateRemoveCard(newViews: deleteViews)
+        addNewViewsToBackground(views: deleteViews)
+        setupConstraints(for: deleteViews)
+    }
 
 
-        newPhoto.transform = CGAffineTransform(
-            translationX: cardbackgroundView.bounds.width,
-            y: 0)
-        newTitle.transform = CGAffineTransform(
-            translationX: cardbackgroundView.bounds.width,
-            y: 0)
+        //MARK: Setups New UI
+    func createNewViews(photo: String, title: String) -> (avatar: UIImageView, title: UILabel, photo: UIImageView) {
+        let newTitle = addTitle(string: title)
+        let newPhoto = addPhotoCard(name: photo)
+        let newAvatar = addImage(name: photo)
 
-        UIView.transition(with: view, duration: 0.3,options: .curveEaseIn , animations: {
-            self.cardImageView.transform = CGAffineTransform(translationX: -self.cardbackgroundView.bounds.width, y: 0)
-            self.titleLabel.transform = CGAffineTransform(translationX: -self.cardbackgroundView.bounds.width, y: 0)
+        return (newAvatar, newTitle, newPhoto)
+    }
 
-            newPhoto.transform = .identity
-            newTitle.transform = .identity
-        }) { _ in
-            self.cardImageView = newPhoto
-            self.titleLabel = newTitle
+    func addNewViewsToBackground(views: (avatar: UIImageView, title: UILabel, photo: UIImageView)) {
+        cardbackgroundView.addSubview(views.avatar)
+        cardbackgroundView.addSubview(views.title)
+        cardbackgroundView.addSubview(views.photo)
+    }
+
+    func setupConstraints(for views: (avatar: UIImageView, title: UILabel, photo: UIImageView)) {
+        NSLayoutConstraint.activate([
+            // Avatar constraints
+            views.avatar.topAnchor.constraint(
+                equalTo: cardbackgroundView.topAnchor,
+                constant: 16),
+            views.avatar.leadingAnchor.constraint(
+                equalTo: cardbackgroundView.leadingAnchor,
+                constant: 16),
+            views.avatar.heightAnchor.constraint(
+                equalToConstant: avatarSize),
+            views.avatar.widthAnchor.constraint(
+                equalTo: avatarImageView.heightAnchor),
+
+            // Title constraints
+            views.title.leadingAnchor.constraint(
+                equalTo: avatarImageView.trailingAnchor,
+                constant: 15),
+            views.title.centerYAnchor.constraint(
+                equalTo: avatarImageView.centerYAnchor),
+
+            // Photo constraints
+            views.photo.topAnchor.constraint(
+                equalTo: avatarImageView.bottomAnchor, constant: 15),
+            views.photo.leadingAnchor.constraint(
+                equalTo: cardbackgroundView.leadingAnchor),
+            views.photo.trailingAnchor.constraint(
+                equalTo: cardbackgroundView.trailingAnchor),
+            views.photo.heightAnchor.constraint(
+                equalToConstant: heightPhoto)
+        ])
+    }
+
+    func animateCardTransition(newViews: (avatar: UIImageView, title: UILabel, photo: UIImageView)) {
+        [newViews.avatar, newViews.title, newViews.photo].forEach { view in
+            view.transform = CGAffineTransform(
+                translationX: self.view.bounds.width,
+                y: 0)
         }
 
+        UIView.transition(with: view, duration: 0.3, options: .curveEaseIn, animations: {
+            [self.avatarImageView, self.titleLabel, self.cardImageView].forEach { view in
+                view.transform = CGAffineTransform(
+                    translationX: -self.view.bounds.width,
+                    y: 0)
+            }
 
+            [newViews.avatar, newViews.title, newViews.photo].forEach { view in
+                view.transform = .identity
+            }
+        }) { _ in
+            self.avatarImageView = newViews.avatar
+            self.cardImageView = newViews.photo
+            self.titleLabel = newViews.title
+        }
+    }
+
+    func animateRemoveCard(newViews: (avatar: UIImageView, title: UILabel, photo: UIImageView)) {
+        [newViews.avatar, newViews.title, newViews.photo].forEach { view in
+            view.transform = CGAffineTransform(translationX: -self.view.bounds.width, y: 0)
+        }
+
+        UIView.transition(with: view, duration: 0.3, options: .curveEaseIn, animations: {
+            [self.avatarImageView, self.titleLabel, self.cardImageView].forEach { view in
+                view.transform = CGAffineTransform(translationX: self.view.bounds.width, y: 0)
+            }
+
+            [newViews.avatar, newViews.title, newViews.photo].forEach { view in
+                view.transform = .identity
+            }
+        }) { _ in
+            self.avatarImageView.removeFromSuperview()
+            self.cardImageView.removeFromSuperview()
+            self.titleLabel.removeFromSuperview()
+
+            self.avatarImageView = newViews.avatar
+            self.cardImageView = newViews.photo
+            self.titleLabel = newViews.title
+
+            self.setupConstraints(for: (self.avatarImageView, self.titleLabel, self.cardImageView))
+            self.view.layoutIfNeeded()
+        }
     }
 
 
 
-    //MARK: UI Helper
+
+        //MARK: UI Helper
+
+    func addBackground() -> UIView {
+        {
+            $0.backgroundColor = .systemGray5
+            $0.layer.cornerRadius = cornerRadius
+            $0.clipsToBounds = true
+            $0.translatesAutoresizingMaskIntoConstraints = false
+
+            return $0
+        }(UIView())
+    }
+
+    func addPhotoCard(name: String) -> UIImageView {
+        {
+            $0.image = UIImage(named: card[cardIndex].photo)
+            $0.contentMode = .scaleAspectFill
+            $0.clipsToBounds = true
+            $0.translatesAutoresizingMaskIntoConstraints = false
+
+            return $0
+        }(UIImageView())
+    }
+
     func addImage(name: String) -> UIImageView {
         {
             $0.image = UIImage(named: name)
@@ -228,13 +335,23 @@ private extension CardViewController {
                 }
             }
 
-                $0.translatesAutoresizingMaskIntoConstraints = false
-                return $0
-            }(UIButton())
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            return $0
+        }(UIButton())
     }
 
 
         //MARK: Constraints
+    func constraintsUI() {
+        constraintsBackgroundView()
+        constraintsAvatarImage()
+        constraintsTitleImage()
+        constraintsPhotoCard()
+        constraintsLikeImage()
+        constraintsCommentImageView()
+        constraintsButtonStackView()
+    }
+
     func constraintsBackgroundView() {
         NSLayoutConstraint.activate([
             cardbackgroundView.topAnchor.constraint(
@@ -266,12 +383,12 @@ private extension CardViewController {
 
     func constraintsTitleImage() {
         NSLayoutConstraint.activate([
-                titleLabel.leadingAnchor.constraint(
-                    equalTo: avatarImageView.trailingAnchor,
-                    constant: 15),
-                titleLabel.centerYAnchor.constraint(
-                    equalTo: avatarImageView.centerYAnchor)
-            ])
+            titleLabel.leadingAnchor.constraint(
+                equalTo: avatarImageView.trailingAnchor,
+                constant: 15),
+            titleLabel.centerYAnchor.constraint(
+                equalTo: avatarImageView.centerYAnchor)
+        ])
     }
 
     func constraintsPhotoCard() {
@@ -284,39 +401,39 @@ private extension CardViewController {
                 equalTo: cardbackgroundView.trailingAnchor),
             cardImageView.heightAnchor.constraint(
                 equalToConstant: heightPhoto)
-            ])
+        ])
     }
 
     func constraintsLikeImage() {
         NSLayoutConstraint.activate([
-                likeImageView.topAnchor.constraint(
-                    equalTo: cardImageView.bottomAnchor,
-                    constant: 15),
-                likeImageView.leadingAnchor.constraint(
-                    equalTo: avatarImageView.leadingAnchor),
-                likeImageView.widthAnchor.constraint(
-                    equalToConstant: avatarSize - 10),
-                likeImageView.heightAnchor.constraint(
-                    equalTo: likeImageView.widthAnchor),
-                likeImageView.bottomAnchor.constraint(
-                    equalTo: cardbackgroundView.bottomAnchor,
-                    constant: -40)
-            ])
+            likeImageView.topAnchor.constraint(
+                equalTo: cardImageView.bottomAnchor,
+                constant: 15),
+            likeImageView.leadingAnchor.constraint(
+                equalTo: avatarImageView.leadingAnchor),
+            likeImageView.widthAnchor.constraint(
+                equalToConstant: avatarSize - 10),
+            likeImageView.heightAnchor.constraint(
+                equalTo: likeImageView.widthAnchor),
+            likeImageView.bottomAnchor.constraint(
+                equalTo: cardbackgroundView.bottomAnchor,
+                constant: -40)
+        ])
     }
 
     func constraintsCommentImageView() {
         NSLayoutConstraint.activate([
-                commentImageView.centerYAnchor.constraint(
-                    equalTo: likeImageView.centerYAnchor),
-                commentImageView.leadingAnchor.constraint(
-                    equalTo: likeImageView.trailingAnchor,
-                    constant: 15),
-                commentImageView.widthAnchor.constraint(
-                    equalTo: likeImageView.widthAnchor,
-                    multiplier: 0.9),
-                commentImageView.heightAnchor.constraint(
-                    equalTo: commentImageView.widthAnchor)
-            ])
+            commentImageView.centerYAnchor.constraint(
+                equalTo: likeImageView.centerYAnchor),
+            commentImageView.leadingAnchor.constraint(
+                equalTo: likeImageView.trailingAnchor,
+                constant: 15),
+            commentImageView.widthAnchor.constraint(
+                equalTo: likeImageView.widthAnchor,
+                multiplier: 0.9),
+            commentImageView.heightAnchor.constraint(
+                equalTo: commentImageView.widthAnchor)
+        ])
     }
 
     func constraintsButtonStackView() {
