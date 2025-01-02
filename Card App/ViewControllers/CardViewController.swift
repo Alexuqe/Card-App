@@ -11,9 +11,10 @@ final class CardViewController: UIViewController {
 
         //MARK: Outlets
     private let cardbackgroundView = UIView()
-    private let titleLabel = UILabel()
-    private let cardImageView = UIImageView()
-    private lazy var rightButton = addButton(image: "tray")
+    private var cardImageView = UIImageView()
+    private let buttonStackView = UIStackView()
+    private lazy var titleLabel = addTitle(string: card[cardIndex].title)
+    private lazy var rightButton = addButton(image: "checkmark")
     private lazy var leftButton = addButton(image: "xmark")
     private lazy var avatarImageView = addImage(name: "bannana")
     private lazy var likeImageView = addImage(systemName: "heart")
@@ -26,20 +27,15 @@ final class CardViewController: UIViewController {
     private var cardIndex = 0
     private let cornerRadius: CGFloat = 40
     private let avatarSize: CGFloat = 40
-    private let sizeButton: CGFloat = 50
+    private let sizeButton: CGFloat = 80
     private var heightPhoto: CGFloat = 0
 
         // MARK: - View Life Cycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-    }
-
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         view.backgroundColor = .systemGray6
         heightPhoto = view.bounds.height / 2
-        updateUI()
+        setupUI()
     }
 
 
@@ -49,15 +45,14 @@ final class CardViewController: UIViewController {
 private extension CardViewController {
 
         //MARK: Update UI
-    func updateUI() {
+    func setupUI() {
         configureCardBackground()
         configureAvatarImage()
         configurePhotoCard()
         configureTitleImage()
         configureLikeImageView()
         configureCommentImageView()
-        configureLeftButton()
-        configureRightButton()
+        configureButtonStackView()
     }
 
         //MARK: Configure UI
@@ -77,15 +72,6 @@ private extension CardViewController {
     }
 
     func configureTitleImage() {
-        titleLabel.text = card[cardIndex].title
-        titleLabel.font = UIFont.systemFont(ofSize: 20, weight: .regular)
-        titleLabel.textColor = .black
-        titleLabel.textAlignment = .center
-        titleLabel.minimumScaleFactor = 0.5
-        titleLabel.adjustsFontSizeToFitWidth = true
-        titleLabel.adjustsFontForContentSizeCategory = true
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-
         cardbackgroundView.addSubview(titleLabel)
         constraintsTitleImage()
     }
@@ -110,19 +96,76 @@ private extension CardViewController {
         constraintsCommentImageView()
     }
 
-    func configureLeftButton() {
-        view.addSubview(leftButton)
-        constraintsLeftButton()
+
+    func configureButtonStackView() {
+        buttonStackView.axis = .horizontal
+        buttonStackView.distribution = .fillEqually
+        buttonStackView.alignment = .fill
+        buttonStackView.spacing = 10
+        buttonStackView.translatesAutoresizingMaskIntoConstraints = false
+        buttonStackView.addArrangedSubview(leftButton)
+        buttonStackView.addArrangedSubview(rightButton)
+
+        view.addSubview(buttonStackView)
+
+        constraintsButtonStackView()
+
+        rightButton.addTarget(self, action: #selector(done), for: .touchUpInside)
     }
 
-    func configureRightButton() {
-        view.addSubview(rightButton)
-        constraintsRightButton()
+
+    //MARK: Actions
+
+    @objc func done () {
+//        nextCard()
     }
+
+
+
+    func nextCard() {
+        cardIndex += 1
+        if cardIndex < card.count - 1 {
+            updateUI()
+        } else {
+            return
+        }
+    }
+
+    func updateUI() {
+        let currentPhoto = card[cardIndex].photo
+        let currentTitle = card[cardIndex].title
+
+        let newPhoto = addImage(name: currentPhoto)
+        let newTitle = addTitle(string: currentTitle)
+
+        cardbackgroundView.addSubview(newPhoto)
+        cardbackgroundView.addSubview(newTitle)
+
+
+        newPhoto.transform = CGAffineTransform(
+            translationX: cardbackgroundView.bounds.width,
+            y: 0)
+        newTitle.transform = CGAffineTransform(
+            translationX: cardbackgroundView.bounds.width,
+            y: 0)
+
+        UIView.transition(with: view, duration: 0.3,options: .curveEaseIn , animations: {
+            self.cardImageView.transform = CGAffineTransform(translationX: -self.cardbackgroundView.bounds.width, y: 0)
+            self.titleLabel.transform = CGAffineTransform(translationX: -self.cardbackgroundView.bounds.width, y: 0)
+
+            newPhoto.transform = .identity
+            newTitle.transform = .identity
+        }) { _ in
+            self.cardImageView = newPhoto
+            self.titleLabel = newTitle
+        }
+
+
+    }
+
 
 
     //MARK: UI Helper
-
     func addImage(name: String) -> UIImageView {
         {
             $0.image = UIImage(named: name)
@@ -133,6 +176,20 @@ private extension CardViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
             return $0
         }(UIImageView())
+    }
+
+    func addTitle(string: String) -> UILabel {
+        {
+            $0.text = string
+            $0.font = UIFont.systemFont(ofSize: 20, weight: .regular)
+            $0.textColor = .black
+            $0.textAlignment = .center
+            $0.minimumScaleFactor = 0.5
+            $0.adjustsFontSizeToFitWidth = true
+            $0.adjustsFontForContentSizeCategory = true
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            return $0
+        }(UILabel())
     }
 
     func addImage(systemName: String) -> UIImageView {
@@ -156,16 +213,24 @@ private extension CardViewController {
             configure.background.strokeColor = .darkGray
             configure.baseBackgroundColor = .clear
             configure.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(
-                pointSize: 20,
+                pointSize: 25,
                 weight: .regular
             )
 
             $0.configuration = configure
-            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.configurationUpdateHandler = { button in
+                switch button.state {
+                    case .highlighted:
+                        button.layer.cornerRadius = button.bounds.height / 2
+                        button.backgroundColor = .systemGray.withAlphaComponent(0.2)
+                    default:
+                        button.backgroundColor = .clear
+                }
+            }
 
-            return $0
-        }(UIButton())
-
+                $0.translatesAutoresizingMaskIntoConstraints = false
+                return $0
+            }(UIButton())
     }
 
 
@@ -254,29 +319,14 @@ private extension CardViewController {
             ])
     }
 
-    func constraintsLeftButton() {
+    func constraintsButtonStackView() {
         NSLayoutConstraint.activate([
-            leftButton.bottomAnchor.constraint(
+            buttonStackView.bottomAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
-            leftButton.leadingAnchor.constraint(
+            buttonStackView.leadingAnchor.constraint(
                 equalTo: cardbackgroundView.leadingAnchor),
-            leftButton.widthAnchor.constraint(
-                equalToConstant: sizeButton),
-            leftButton.heightAnchor.constraint(
-                equalTo: leftButton.widthAnchor)
-        ])
-    }
-
-    func constraintsRightButton() {
-        NSLayoutConstraint.activate([
-            rightButton.leadingAnchor.constraint(
-                equalTo: leftButton.trailingAnchor,
-                constant: 15),
-            rightButton.heightAnchor.constraint(equalToConstant: sizeButton),
-            rightButton.widthAnchor.constraint(equalToConstant: sizeButton),
-            rightButton.bottomAnchor.constraint(equalTo: leftButton.bottomAnchor)
-
-
+            buttonStackView.trailingAnchor.constraint(equalTo: cardbackgroundView.trailingAnchor),
+            buttonStackView.heightAnchor.constraint(equalToConstant: sizeButton)
         ])
     }
 
